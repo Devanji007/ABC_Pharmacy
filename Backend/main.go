@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
@@ -38,6 +40,9 @@ func main() {
 	}
 
 	app := fiber.New()
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+	}))
 	routes.SetupItemRoutes(app)
 	routes.SetupInvoiceRoutes(app)
 	app.Listen(":8080")

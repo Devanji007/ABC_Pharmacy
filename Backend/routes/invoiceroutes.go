@@ -8,9 +8,10 @@ import (
 )
 
 type InvoiceItem struct {
-	ItemName  string  `json:"itemname"`
+	InvId     uint    `gorm:"primaryKey" json:"invid"`
+	ItemId    uint    `gorm:"primaryKey" json:"itemid"`
+	Quantity  int64   `json:"quantity"`
 	UnitPrice float64 `json:"unitprice"`
-	Category  string  `json:"category"`
 }
 
 type Invoice struct {

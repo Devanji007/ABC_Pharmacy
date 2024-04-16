@@ -4,33 +4,20 @@ import (
 	"ABC_PHARMACY/models"
 	"fmt"
 	"net/http"
-	"time"
+	
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type InvoiceItem struct {
-	InvId    uint  `gorm:"primaryKey" json:"invid"`
-	ItemId   uint  `gorm:"primaryKey" json:"itemid"`
-	Quantity int64 `json:"unitprice"`
-}
-
-type Invoice struct {
-	InvId       uint      `gorm:"primary key;autoIncrement" json:"invid"`
-	CusName     *string   `json:"cusname"`
-	MobNo       *string   `json:"mobno"`
-	Email       *string   `json:"email"`
-	Address     *string   `json:"address"`
-	BillingType *string   `json:"billingtype"`
-	TotalAmount *float64  `json:"totalamount"`
-	CreatedAt   time.Time `json:"createdat"`
-	UpdatedAt   time.Time `json:"updatedat"`
+type InvoiceReq struct{
+	Invoice models.Invoice 		`json:"invoice"`
+	Items []models.InvoiceItem 	`json:"items"`
 }
 
 func CreateInvoice(context *fiber.Ctx) error {
-	invoice := Invoice{}
+	invoiceReq := InvoiceReq{}
 
-	err := context.BodyParser(&invoice)
+	err := context.BodyParser(&invoiceReq)
 
 	if err != nil {
 		context.Status(http.StatusUnprocessableEntity).JSON(
@@ -38,11 +25,31 @@ func CreateInvoice(context *fiber.Ctx) error {
 		return err
 	}
 
-	err = r.DB.Create(&invoice).Error
-	if err != nil {
+	invoice := invoiceReq.Invoice
+	items := invoiceReq.Items
+
+	result := r.DB.Create(&invoice)
+	if result.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "could not create invoice"})
 		return err
+	}
+
+	// Iterate over the items in the Invoice struct
+	for _, item := range items {
+		// Create a new InvoiceItem record
+		invoiceItem := models.InvoiceItem{
+			InvId:     invoice.InvId, // Assign the InvId from the Invoice struct
+			ItemId:    item.ItemId,   // Assign the ItemId from the Item struct
+			Quantity:  item.Quantity,
+			UnitPrice: item.UnitPrice,
+		}
+
+		// Insert the new record into the InvoiceItem table
+		if err := r.DB.Create(&invoiceItem).Error; err != nil {
+			context.Status(http.StatusInternalServerError).JSON(&fiber.Map{"message": "Failed to create invoice item"})
+			return err
+		}
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
@@ -98,6 +105,8 @@ func GetInvoiceByID(context *fiber.Ctx) error {
 
 	id := context.Params("inv_id")
 	invoiceModel := &models.Invoice{}
+	invoiceItemModel := []models.InvoiceItem{}
+
 	if id == "" {
 		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "id cannot be empty",
@@ -112,9 +121,23 @@ func GetInvoiceByID(context *fiber.Ctx) error {
 			&fiber.Map{"meesage": "could not get the invoice"})
 		return err
 	}
+
+	err = r.DB.Where("inv_id = ?", id).Find(&invoiceItemModel).Error
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"meesage": "could not get the invoice"})
+		return err
+	}
+
+	invoice := InvoiceReq{
+		Invoice: *invoiceModel,
+		Items: invoiceItemModel,
+	}
+
+
 	context.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "invoice id fetched succcessfully",
-		"data":    invoiceModel,
+		"data":    invoice,
 	})
 	return nil
 }
