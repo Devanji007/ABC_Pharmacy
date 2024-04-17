@@ -13,7 +13,11 @@ const HomePage = () =>{
         <>
            <h1>Home Page</h1>
            <Button onClick={() => navigate('/invoice')}>Go to Invoices</Button>
+           <Button onClick={() => navigate('/item')}>Go to Items</Button>
+           <Button onClick={() => navigate('/AddItem')}>Add Item</Button>
+           <Button onClick={() => navigate('/CreateInvoice')}>Create Invoice</Button>
         </>
+        
     )
 }
 

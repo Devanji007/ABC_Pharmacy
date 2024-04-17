@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	
 )
 
 type Invoice struct {
@@ -13,9 +11,7 @@ type Invoice struct {
 	Email       *string   `json:"email"`
 	Address     *string   `json:"address"`
 	BillingType *string   `json:"billingtype"`
-	TotalAmount *float64  `json:"totalamount"`
+	TotalAmount *string   `json:"totalamount"`
 	CreatedAt   time.Time `json:"createdat"`
-	UpdatedAt time.Time `json:"updatedat"`
+	UpdatedAt   time.Time `json:"updatedat"`
 }
-
-

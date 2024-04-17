@@ -8,9 +8,9 @@ import (
 )
 
 type InvoiceItem struct {
-	InvId     uint    `gorm:"primaryKey" json:"invid"`
-	ItemId    uint    `gorm:"primaryKey" json:"itemid"`
-	Quantity  int64   `json:"quantity"`
+	InvId     uint   `gorm:"primaryKey" json:"invid"`
+	ItemId    uint   `gorm:"primaryKey" json:"itemid"`
+	Quantity  int64  `json:"quantity"`
 	UnitPrice float64 `json:"unitprice"`
 }
 
@@ -21,7 +21,7 @@ type Invoice struct {
 	Email       *string   `json:"email"`
 	Address     *string   `json:"address"`
 	BillingType *string   `json:"billingtype"`
-	TotalAmount *float64  `json:"totalamount"`
+	TotalAmount *string   `json:"totalamount"`
 	CreatedAt   time.Time `json:"createdat"`
 	UpdatedAt   time.Time `json:"updatedat"`
 }

@@ -5,6 +5,9 @@ import './index.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import HomePage from './pages/homePage.jsx'
 import InvoicePage from './pages/invoicePage.jsx'
+import ItemPage from './pages/itemPage.jsx'
+import CreateItemPage from './pages/createItemPage.jsx'
+import CreateInvoicePage from './pages/createInvoicePage.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -12,6 +15,11 @@ const router = createBrowserRouter(
       
     <Route index={ true } path='/' element={ <HomePage /> } />
      <Route path='/invoice' element={ <InvoicePage /> } /> 
+     <Route path='/item' element={ <ItemPage /> } /> 
+     <Route path='/AddItem' element={ <CreateItemPage /> } /> 
+     <Route path='/CreateInvoice' element={ <CreateInvoicePage /> } /> 
+
+
 
   </Route>
   )
